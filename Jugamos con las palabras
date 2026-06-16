@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='es'><head><meta charset='UTF-8'><title>Juego Lectoescritura</title></head>
+<body>
+<h1>🏝️ Aventura de Lectoescritura</h1>
+<p>3 niveles con voz del navegador (es-AR si está disponible).</p>
+<select id='nivel'>
+<option value='1'>Nivel 1 - Conciencia fonológica</option>
+<option value='2'>Nivel 2 - Lectura de palabras</option>
+<option value='3'>Nivel 3 - Comprensión</option>
+</select>
+<button onclick='iniciar()'>Comenzar</button>
+<h2 id='pregunta'></h2>
+<div id='opciones'></div>
+<p id='fb'></p>
+<p>Puntaje: <span id='score'>0</span></p>
+
+<script>
+let score=0,idx=0,actual=[];
+const niveles={
+1:[{t:'¿Con qué sonido empieza SOL?',s:'sol',o:['/s/','/m/','/p/'],c:0},
+{t:'¿Qué sonido escuchás al final de PAN?',s:'pan',o:['/n/','/r/','/l/'],c:0}],
+2:[{t:'Completá M _ S A',s:'mesa',o:['E','I','O'],c:0},
+{t:'Elegí la palabra correcta',s:'casa',o:['CASA','KASA','CAZA'],c:0}],
+3:[{t:'Tomás regó la planta. ¿Por qué creció?',s:'Tomás regó la planta',o:['Porque la regó','Porque corrió','Porque era azul'],c:0},
+{t:'Sofía salió con paraguas. ¿Qué inferís?',s:'Sofía salió con paraguas',o:['Llovía','Nevaba','Era de noche'],c:0}]
+};
+function hablar(txt){
+ let u=new SpeechSynthesisUtterance(txt);
+ u.lang='es-AR';
+ speechSynthesis.speak(u);
+}
+function iniciar(){score=0;idx=0;actual=niveles[document.getElementById('nivel').value];mostrar();}
+function mostrar(){
+ if(idx>=actual.length){document.getElementById('pregunta').innerText='🎉 Nivel completado';document.getElementById('opciones').innerHTML='';return;}
+ let p=actual[idx];
+ document.getElementById('pregunta').innerHTML=p.t+" <button onclick=\"hablar('"+p.s+"')\">🔊</button>";
+ let h='';
+ p.o.forEach((x,i)=>h+=`<button onclick="resp(${i})">${x}</button>`);
+ document.getElementById('opciones').innerHTML=h;
+}
+function resp(i){
+ if(i===actual[idx].c){score++;document.getElementById('fb').innerText='¡Muy bien!';}
+ else{document.getElementById('fb').innerText='Seguimos practicando';}
+ document.getElementById('score').innerText=score;
+ idx++; setTimeout(mostrar,800);
+}
+</script></body></html>
